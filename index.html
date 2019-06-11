@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>SP - ICI</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+      crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="container peach-gradient"
+        style="background: rgb(77,90,121); background: radial-gradient(circle, rgba(77,90,121,1) 0%, rgba(2,7,13,1) 100%);
+        height: 100vh; width: 94vw; padding:10vw;padding-top: 4vw;">
+    <div style="display:none" id="credAlert" class="alert alert-success alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      Your credentials has been successfully updated!
+    </div>
+    <div style="display:none" id="uploadAlert" class="alert alert-success alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      File successfully uploaded!
+    </div>
+    <div style="display:none" id="errorAlert" class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        Error occured during uploading, please check all the credential and file paths!
+    </div>
+    <div>
+      <p style="text-align: center;font-size: 7em;color: white;margin:0">SP - ICI</p>
+      <p style="text-align: center;font-size: 1.2em;color: white;">Upload files to your registered ICI - Sharepoint domain</p>
+    </div>
+
+    <div class="row" style="margin-top:3vw">
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-danger" data-toggle="collapse" data-target="#credentials" style="display:block; margin:auto">Manage Credentials</button>
+        <div id="credentials" class="collapse">
+          <br>
+          <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+          <br>
+          <input type="text" class="form-control" id="password" placeholder="Password">
+          <br>
+          <input type="text" class="form-control" id="baseUrl" placeholder="Destination Url">
+          <br>
+          <button class="btn btn-success" id="credSubmit" style="margin:auto; display:block">Set Credentials!</button>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-danger" data-toggle="collapse" data-target="#fileData" style="display:block; margin:auto">Upload File</button>
+        <div id="fileData" class="collapse">
+          <br>
+          <div class="input-group" style="color:white">
+            <form id="file-form"  method="POST"  enctype="multipart/form-data" style="display: flex;flex-flow: row wrap;align-items: center; margin:auto; padding-left:32%">
+
+              <input type="file" id="file-select" name="fileFormName" class="btn btn-default"/>
+              <br>
+              <button type="submit" id="upload-button" class="btn btn-success" style=" margin:auto;margin-top:5%;display:block;">Upload!</button>
+            </form>
+          </div>
+          <br>
+          <div id="urlBlock" style="display:none">
+              <p style="text-align: center;font-size: 1em;color: white;">Shareable link</p>
+              <div  class="input-group" >
+                  <input type="text" class="form-control" placeholder="No Link" id="remoteFileUrl">
+                  <span class="input-group-btn">
+                      <button class="btn btn-warning" type="button" id="copyBtn">Copy</button>
+                 </span>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div style="display:none" id="uploadingAlert" class="alert alert-info">
+      <p style="text-align: center">File is uploading, please wait!</p>
+    </div>
+    <footer style="margin-top:2vw">
+      <div style="color:white; text-align: center">
+          <a href="https://www.facebook.com/fazal.karim.33865" class="btn btn-social-icon btn-facebook" target="_blank">
+            <span class="fa-stack fa-lg" style="color:white">
+          <i class="fa fa-square-o fa-stack-2x"></i>
+          <i class="fa fa-facebook fa-stack-1x"></i>
+        </span>
+          </a>
+          <a href="mailto:meetfazalkarim@gmail.com" class="btn btn-social-icon btn-google" target="_blank">
+            <span class="fa-stack fa-lg" style="color:white">
+          <i class="fa fa-square-o fa-stack-2x"></i>
+          <i class="fa fa-google fa-stack-1x"></i>
+        </span>
+          </a>
+          <a href="https://www.linkedin.com/in/fazal-karim-4828a3117/" class="btn btn-social-icon btn-linkedin" target="_blank">
+            <span class="fa-stack fa-lg" style="color:white">
+          <i class="fa fa-square-o fa-stack-2x"></i>
+          <i class="fa fa-linkedin-square fa-stack-1x"></i>
+        </span>
+          </a>
+      </div>
+      <br>
+      <p style="text-align: center;font-size: 1em;color: white;margin:0">Powered by: Fazal & Saif</p>
+      <br>
+    </footer>
+  <script>
+    var form = document.getElementById('file-form');
+    var fileSelect = document.getElementById('file-select');
+    var uploadButton = document.getElementById('upload-button');
+
+    $(function() {
+      var data = {};
+      data = JSON.parse(localStorage.getItem('credData'));
+      $('#email').val(data.email);
+      $('#password').val(data.password);
+      $('#baseUrl').val(data.baseUrl);
+    });
+
+    $('#credSubmit').click(function(){
+      localStorage.clear();
+      var data = {
+        email:    $('#email').val(),
+        password: $('#password').val(),
+        baseUrl:  $('#baseUrl').val(),
+      };
+      localStorage.setItem('credData', JSON.stringify(data));
+      $('#credAlert').slideDown();
+    });
+
+    $('#copyBtn').click(function(){
+      var copyText = document.getElementById("remoteFileUrl");
+      copyText.select();
+      document.execCommand("copy");
+      alert('Copied');
+    })
+
+    form.onsubmit = function(event) {
+      event.preventDefault();
+      $('#uploadingAlert').slideDown();
+      $('#urlBlock').hide();
+      $('#remoteFileUrl').val('');
+
+      var data = {};
+      data = JSON.parse(localStorage.getItem('credData'));
+
+      var file = fileSelect.files[0];
+      var formData = new FormData();
+      formData.append('fileFormName', file, file.name);
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+      formData.append('baseUrl', data.baseUrl);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://sp-ici.herokuapp.com/postFile', true);
+      xhr.onreadystatechange = function() {
+      $('#uploadingAlert').hide();
+
+      if (xhr.readyState == 4) {
+        var response = JSON.parse(xhr.response);
+        if(response.status === 'success') {
+          $('#urlBlock').show();
+          $('#remoteFileUrl').val(response.url);
+          $('#uploadAlert').slideDown();
+        }else {
+          console.log(response);
+          $('#errorAlert').slideDown();
+          $('#urlBlock').hide();
+        }
+        setTimeout(()=>{
+          $('#uploadAlert').hide();
+          $('#errorAlert').hide();
+        }, 10000);
+      }
+    }
+      xhr.send(formData);
+    }
+    </script>
+  </body>
+</html>
+
+
